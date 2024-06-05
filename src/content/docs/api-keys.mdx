@@ -1,0 +1,40 @@
+---
+title: Obtain API-keys to perform requests
+description: Here we describe how to get an API-Key from ahead
+prev: false
+next: false
+---
+
+import { Image } from 'astro:assets';
+import image1 from './assets/use-postman-1.png'
+
+## Getting the API-Key
+
+First, you will need the API Key. To get it, you need to be an administrator in your ahead intranet 
+(or know somebody who is). Under **Company Settings / Integrations** you will find the **API-Keys**.
+
+There it is possible to:
+* obtain one or several API-Keys and give them a descriptive name to be able to identify import protocols (see chapter on “Responses”)
+* delete an API-Key in case that it is not in use anymore or has otherwise leaked into a system with unrestricted visibility.
+
+<Image src={image1} alt="The API Keys view under Company Settings / Integrations" />
+
+When you add one, you need to select for which feature it will be used.
+
+:::danger
+Please take care of your API-Keys. They allow you to import data into the profiles of your users that use ahead. 
+If you suspect that the key has been compromised, use the ahead administration interface to revoke the API-Key in question.
+:::
+
+## Usage
+
+Once created, clicking the _eye_-Symbol will reveal the API-key. Pressing the _copy_-symbol will copy 
+the API Key to the clipboard. Now you are equipped to prepare an API-Call to ahead's import API.
+
+:::note
+An API-Key will only work for its intended usage. You cannot e.g. use one reated for "Activities" for
+the "People Import".
+:::
+
+When calling the API, you need to provide the API-Key as copied out from ahead as value to the custom **“x-functions-key”** HTTP-Header.
+
