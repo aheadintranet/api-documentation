@@ -39,6 +39,10 @@ export default defineConfig({
             },
           ],
         },
+		{
+			label: "Kiosk API",
+			autogenerate: { directory: "kiosk/" },
+		}
       ],
     }),
   ],
