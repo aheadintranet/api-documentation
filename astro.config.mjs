@@ -5,7 +5,7 @@ import starlight from '@astrojs/starlight';
 export default defineConfig({
 	integrations: [
 		starlight({
-			title: 'Profile Import docs',
+			title: 'API Documentation',
 			favicon: '/src/assets/ahead_a.svg',
 			logo: {
 				light: '/src/assets/ahead--light.png',
@@ -13,18 +13,24 @@ export default defineConfig({
 			},
 			social: {
 				linkedin: 'https://www.linkedin.com/company/aheadintranet/',
-				github: 'https://github.com/aheadintranet/people-profile-import',
+				github: 'https://github.com/aheadintranet/api-documentation',
 				email: 'mailto:support@aheadintranet.com',
 			},
 			sidebar: [
 				{
-					label: 'Reference',
-					autogenerate: { directory: 'reference' },
-				},
-				{
-					label: 'Guides',
-					autogenerate: { directory: 'guides' },
+					label: "Profile Import",
+					items: [
+						{
+							label: 'Reference',
+							autogenerate: { directory: 'people-import/reference' },
+						},
+						{
+							label: 'Guides',
+							autogenerate: { directory: 'people-import/guides' },
+						}
+					]
 				}
+				
 			],
 		}),
 	],
