@@ -1,0 +1,105 @@
+---
+title: Endpoint description
+description: How to reach the endpoint and basic settings around the HTTP Headers
+---
+import { CardGrid, LinkCard } from '@astrojs/starlight/components';
+
+:::note
+<h4>The ahead profiles API URL is</h4>
+<h5>htt<span>ps://connect</span>.aheadintranet.com/api/PeopleImport</h5>
+:::
+
+## Request
+
+The API accepts **PUT**s with the following headers.
+
+### x-functions-key
+
+The API-Key necessary to authorize the request
+
+<LinkCard
+  title="Authentication & Authorization"
+  href="../03-authentication-authorization/"
+/>
+
+### Content-Type
+
+Supported content types are
+
+#### multipart/form-data
+
+:::tip
+The structure of a multipart/form-data request is formally described at https://www.rfc-editor.org/rfc/rfc2388. It forms the basis of e.g., file uploads from HTML form submissions.
+:::
+
+Each part of a multipart request also defines its own content-type. Currently supported are
+
+* application/json - An update of a profile in the form of a **Person update JSON object**.
+* application/pdf - A *.pdf document for upload to the personal section of a user
+
+A request may contain up to 50 parts. Each part corresponds to the update of one person or the addition of a file for a person.
+
+<CardGrid>
+    <LinkCard
+        title="Person update JSON object"
+        description="Learn about the specifics of the person update JSON"
+        href="../05-person-json-object/"
+    />
+    <LinkCard
+        title="Sending files"
+        description="Learn how to transmit files to your user's personal sections"
+        href="../06-sending-files/"
+    />
+</CardGrid>
+
+#### application/json
+
+Send a JSON array of **person update JSON objects**. The array may only contain up to **50 objects**.
+
+:::tip
+This kind of API usage only supports the update of fields directly related to profiles. It will **not** allow the upload of files.
+In this case, you will need to send `multipart/form-data`-requests
+:::
+
+<LinkCard
+    title="Person update JSON object"
+    description="Learn about the specifics of the person update JSON"
+    href="../05-person-json-object/"
+/>
+
+## Response
+
+:::caution
+Updates will be accepted on a profile-by-profile basis. 
+This means that when the API returns the `422` error code, some of the sent profile updates were successful. 
+In such cases, you will need to identify the proper logs that are correlated with the GUID provided in the body of the 
+response through ahead’s “Integrations” section in the management pages.
+:::
+
+### Status Code 200 
+
+The complete request has been processed without issues. The body of the response will contain a GUID with which this particular request
+can be identified in the import logs.
+
+### Status Code 400 
+
+If there’s any issue with the request at a basic level (e.g. wrong content type), a status code of `400` (Bad request) will be returned. Another possible reason is when all parts of the request failed to be processed.
+
+### Status Code 403 
+
+A request without API-Key or an unknown API-Key will cause a return of `403`. Such calls will not appear in the protocol.
+
+### Status Code 413
+
+A request contains more than 50 people updates.
+
+### Status Code 422
+
+If there are issues with the data itself, which may only apply to a part of the sent data, a status code of `422` (unprocessable content) will be returned. 
+The body of the response will contain a GUID with which this particular request can be identified such that it can be analyzed 
+which specific update command went wrong.
+
+Typical conditions that would lead to a 422 response are:
+•	A particular JSON object could not be correlated with an existing entry (missing / wrong employeeId field)
+•	A JSON object contains fields that are not known as defined in the People Profile Definition
+•	A field is known, but contains the wrong kind of data

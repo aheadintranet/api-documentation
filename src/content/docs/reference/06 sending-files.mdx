@@ -1,0 +1,52 @@
+---
+title: Sending files through the import API
+description: Learn how to send files to ahead
+tableOfContents: false
+next: false
+---
+
+In order to send a file to ahead, a field needs to be specified in the people profile definition to accept a certain kind of file.
+
+```json
+{
+    "name": "salary",
+    "fieldType": "File",
+    "source": "Api",
+    "isList": true
+}
+```
+
+In this example, files of type **salary** can be sent to ahead. The filename of the file(s) being sent via a 
+`multipart/form-data` request needs to follow a certain structure:
+
+```text
+{userIdentifier}__{fieldName}__{fileName}.pdf
+```
+
+Note the **<u>2</u>** underscores between the pieces of information. Following the example, 
+the following would be a valid file name:
+
+```text
+joe@company.com__salary__March 2023.pdf
+```
+
+It would upload a new file named **March 2023.pdf** under the **salary** category for the user with the UPN joe@company.com
+
+:::tip
+When you upload the **same** file again (i,e, with the same combination of **field name** and **file name**), the current file will be replaced
+much like on a file system with automatic overwrite. In the import logs you will see the difference by finding any of such entries:
+
+```text
+Success - FileUploaded - Uploaded file 'salary/March 2023.pdf' for 'joe@company.com'
+...
+Success - FileUploaded - Replaced file 'salary/March 2023.pdf' for 'joe@company.com'
+```
+:::
+
+You can send up to **50 files** per multipart request.
+
+:::danger
+Regardless of whether you send 50 files on a request, please note that the 
+total size of the request should **not** exceed **104 Megabytes**. 
+The request will not be processed if it exceeds that size.
+:::

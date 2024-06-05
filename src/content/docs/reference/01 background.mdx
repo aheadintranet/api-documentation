@@ -1,0 +1,54 @@
+---
+title: Introduction & Background
+description: Introducton to the concepts of ahead's people profile
+---
+import { Image } from 'astro:assets';
+import { LinkCard, CardGrid } from '@astrojs/starlight/components';
+import image from '../../../assets/concept-overview.jpg'
+
+
+<Image src={image} alt="The relationships between the API, the people profile definition (PPD), the ahead people store (APS) and its result in the user interface" />
+
+The **people profile definition** (PPD) is a JSON document that will be prepared in collaboration with ahead’s customer success managers and that describes all the known fields of “people” in ahead’s user interface and how those fields are used throughout the UI.
+
+:::note
+**People Profile Definition**
+
+Describes which fields are supported in a user profile, of what type they are (e.g. a list, or a date), in what way they can be added and how they are used in ahead.
+:::
+
+The **ahead people store** (APS) is our database that is regularly synchronized with your MS Entra tenant and provides the basis to merge any additional fields into the profile of a person.
+
+## Microsoft Entra (previously Azure Active Directory)
+
+ahead's default values come from Microsoft Entra. Once ahead has been consented to be used with your tenant, it prepares the APS and creates user profiles from those people found in MS Entra.
+
+## ahead's people profile import API
+
+Most of the documentation here deals with how to use the import API. Based on the fields defined in the **PPD**, customers can use our API to enrich user profiles with additional data.
+
+<CardGrid>
+    <LinkCard
+        title="Authorization & Authentication"
+        description="Learn how to authorize your requests"
+        href="../03-authentication-authorization/"
+    />
+    <LinkCard
+        title="calling the Endpoint"
+        description="Read the specification of the people import API"
+        href="../04-endpoint/"
+    />
+</CardGrid>
+
+## user fields
+
+Fields marked as having the source **User** can be entered by the user. The first time a user logs into ahead they will get a notification inviting them to fill our any empty user fields.
+
+:::caution
+A manual user field cannot be updated via the API.
+:::
+
+:::tip
+User fields are never mandatory. 
+If you need certain fields to always be filled in, they need to be sourced as "API".
+:::

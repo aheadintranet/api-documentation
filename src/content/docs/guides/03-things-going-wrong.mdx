@@ -1,0 +1,60 @@
+---
+title: When things go wrong
+description: How the import logs help when you need to analyze a failed import
+next: false
+tableOfContents: false
+---
+import { Image } from 'astro:assets';
+import image1 from '../../../assets/use-postman-9.png'
+
+This guide familiarizes you with how certain errors can look like in ahead's **Import Logs**.
+You can also try out such error conditions with Postman, as we will do now.
+
+In this guide we send a JSON-array with profile updates that have some issues and we can compare 
+to the output in the import log.
+
+With postman, I send the following data:
+
+```json
+[
+  {
+    "userPrincipalName": "joe@company.com",
+    "unknownField": "Hello"
+  },
+  {
+    "userPrincipalName": "unknown@company.com",
+    "joinDate": "2023-11-01"
+  },
+  {
+    "name": "Sarah McAllister",
+    "joinDate": "2023-11-01"
+  }
+]
+```
+
+In our particular setup, the API returns 400 because all update attempts failed. 
+If you have many import log entries, 
+you can search with the request ID provided in the body of the response:
+
+<Image src={image1} alt="Searching in the import logs" />
+
+We identified the correct import log and access the details. What you will see is something like this:
+
+```text
+2023-11-22T16:32:59 - RequestId: 97aa006e-1fb7-47c6-ad10-1c8331b7d2c7
+Error - InvalidPerson - Invalid person in part 0: UnknownFields: 'unknownField'
+Error - InvalidPerson - Invalid person in part 2: NoPersonIdentifier: Neither 'userPrincipalName' nor 'employeeId' is provided. | UnknownFields: 'name'
+Error - UnknownPerson - Unknown person: 'unknown@company.com'
+```
+
+You see that the 1st and 3rd json update object that were sent are listed first. 
+This is because they were already rejected based on simple validations.
+
+The 2nd entry provided a correlation property (here the UPN) and a known field, but when attempting
+to update, the person was not found.
+
+:::danger
+There are two error conditions that will not generate entries in the import log:
+* The request was not authorized with an api key or the api key was unknown
+* The complete request exceeded the limit of 104 MB
+:::

@@ -1,0 +1,99 @@
+---
+title: Do profile updates with Postman
+description: Here we describe how to get an API-Key from ahead and use it to perform test imports with the Postman tool
+prev: false
+---
+import { LinkCard, CardGrid } from '@astrojs/starlight/components';
+import { Image } from 'astro:assets';
+import image1 from '../../../assets/use-postman-1.png'
+import image2 from '../../../assets/use-postman-2.png'
+import image3 from '../../../assets/use-postman-3.png'
+import image4 from '../../../assets/use-postman-4.png'
+import image5 from '../../../assets/use-postman-5.png'
+
+:::tip
+You should know hot to perform an API request with the [postman tool](https://www.postman.com/) or something similar.
+:::
+
+You have been tasked to call the ahead import API to add information to user profiles. Great! 
+Let us trace the necessary steps that you can successfully call the ahead API with a tool like postman.
+
+## Getting the API-Key
+
+First, you will need the API Key. To get it, you need to be an administrator in your ahead intranet 
+(or know somebody who is). Under **Company Settings / Integrations** you will find the **API-Keys**
+
+<Image src={image1} alt="The API Keys view under Company Settings / Integrations" />
+
+When you add one, you need to select for which feature it will be used - relevant here is the feature 
+**Profile Import**.
+
+Once created, clicking the _eye_-Symbol will reveal the API-key. Pressing the _copy_-symbol will copy 
+the API Key to the clipboard. Now you are equipped to prepare an API-Call to ahead's import API.
+
+## Doing a profile update in Postman
+
+You will need the correct endpoint URL as well as HTTP Verb, namely PUT. See the following screenshot:
+
+<Image src={image2} alt="The headers tab in postman" />
+
+We will first try an update via a JSON array. You need to add a custom header field named `x-functions-key`.
+It's value is the one you copied from the **API-Keys**-section in ahead.
+The `Content-Type` header will be set automatically when you go to the **Body**-Tab and set it 
+to **raw**, choosing **JSON** as the input.
+
+<Image src={image3} alt="The body tab in postman" />
+
+The input should adhere to the structure specified under [The person update JSON object](../../reference/05-person-json-object/).
+
+Now you should be ready to send the request by pressing **Send**!
+
+If all went well, Postman will tell you that the http status code response was `200` and you also got an id
+back as the response body.
+
+<Image src={image4} alt="The response status in postman" />
+
+<LinkCard
+    title="When things go wrong"
+    description="If the response status code is not 200, check out our guide what you can learn about your request from ahead's Import Logs"
+    href="../03-things-going-wrong/"
+/>
+
+## The import log
+
+When you head back to the same page in ahead where you got the API-Keys you should notice that your import
+was registered.
+
+<Image src={image5} alt="The import logs view in ahead" />
+
+Clicking on the details accesses the log file relevant for the import. 
+
+Its content would now look like this:
+
+```text
+2023-11-22T15:47:38 - RequestId: 98e51b88-932d-4a33-8e13-58fc39d7faf1
+Success - PersonUpdated - 'joe@company.com' updated
+```
+
+:::tip
+When you automate the profile import API calls e.g. in a nightly job, requests done within a short timeframe
+will be listed under one entry in the **Import Logs** - hence, one log file may contain several 
+`request ID`s. That's where the search field comes in handy.
+:::
+
+You should now know the basics of how to call the API.
+
+## Additional reading
+
+<CardGrid>
+    <LinkCard
+        title="Authorization & Authentication"
+        description="Learn how to authorize your requests"
+        href="../../reference/03-authentication-authorization/"
+    />
+    <LinkCard
+        title="calling the Endpoint"
+        description="Read the specification of the people import API"
+        href="../../reference/04-endpoint/"
+    />
+</CardGrid>

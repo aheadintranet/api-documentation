@@ -1,0 +1,51 @@
+---
+title: The person update JSON object
+description: Learn about the JSON object that updates a single person in the ahead people store
+---
+
+A person update JSON object may appear as
+
+* part with content-type: application/json in a multipart 
+* as element of a JSON array within the body of a request whose content-type is application/json.
+
+Each JSON object must contain one of 
+* the **“employeeId”** field. This field needs to correlate with a person’s “employeeId” value as stored in MS Entra.
+* the **“userPrincipalName”** (UPN). This field needs to correlate with a person’s user principal name in MS Entra.
+
+Given that the following field has been defined in the people profile definition:
+
+```json
+{
+    "name": "birthDate",
+    "fieldType": "Date",
+    "source": "Api"
+}
+```
+
+Then the following update JSON would update the user with the UPN `joe@company.com` and add (_or update_) its birthday field.
+
+```json
+{
+    "userPrincipalName": "joe@company.com",
+    "birthDate": "1985-10-03",
+}
+```
+
+Sending a null for a supported field effectively deletes the value
+
+```json
+{
+    "userPrincipalName": "joe@company.com",
+    "birthDate": null,
+}
+```
+
+In other words, the update object may contain values for all or a subset of the fields that are marked with source = API 
+in the people profile definition.
+
+Provided that ahead is successful in correlating the person via one of the correlation fields, the provided values will be 
+merged with the existing values. In short, the following rules apply:
+
+*	Any fields not referenced will be left untouched.
+*	Provided fields will overwrite any previously existing values.
+*	If the API call sends “null” for a field, ahead will take this value and use it to overwrite / reset that specific value.

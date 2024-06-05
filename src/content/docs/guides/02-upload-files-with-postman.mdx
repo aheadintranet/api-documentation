@@ -1,0 +1,55 @@
+---
+title: Upload files with postman
+description: How to upload files in Postman
+next: false
+---
+import { Image } from 'astro:assets';
+import image1 from '../../../assets/use-postman-6.png'
+import image2 from '../../../assets/use-postman-7.png'
+import image3 from '../../../assets/use-postman-8.png'
+
+Provided you use ahead also for files to be shown to users in their personal section,
+here you will learn how to do a file upload for a user with postman. This guide assumes that
+you already had a look at [how to get an api-key and use postman to upload a profile update](../01-get-apikey-and-use-postman/).
+
+:::caution
+When testing, bear in mind that you are testing against the _real API_. We recommend that you perform your
+initial tests with a test account created in MS Entra for this purpose, which you can delete after you have verified
+that everything works satisfactorily.
+:::
+
+## Choose the correct content-type
+
+File uploads need to happen with the `Content-Type` set to `multipart/form-data`.
+
+<Image src={image1} alt="Correct settings in the body" />
+
+This is most easily done by setting up the body tab correctly. This will automatically set the correct
+`Content-Type` under the **Headers**-Tab.
+
+## Choose a file
+
+:::caution
+Make sure you understand [how the files need to be named](../../reference/06-sending-files/).
+:::
+
+Now you can choose a file to upload. 
+
+<Image src={image2} alt="uploading a file" />
+
+You could add additional files to repeating the file selection step in the next row. 
+
+Pressing "Send" starts the request and if all goes well, the response status code should be a merry `200`.
+
+## Verifying the upload
+
+Such a request will also show up in the import logs as a file upload:
+
+```text
+2023-11-22T16:20:09 - RequestId: 1bed586b-ed0e-4780-ad06-e9f831ebd3af
+Success - FileUploaded - Uploaded file 'November 2023.pdf' for 'joe@company.com'
+```
+
+And of course, our test subject joe should now see the new file under their **personal space**.
+
+<Image src={image3} alt="The personal space" />
