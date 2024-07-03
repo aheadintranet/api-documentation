@@ -5,4 +5,83 @@ prev: false
 next: false
 ---
 
-## Coming soon
+This page describes everything you need to know to create external activities in ahead.
+
+## External activities
+
+External activities (or simply activities) are basic snippets of information that are sent 
+to a ahead via a POST request at
+
+```text
+https://connect.aheadintranet.com/api/ReceiveExternalActivity
+```
+
+:::note
+In most cases, you can interact with the functionality via Zapier. How to do this is well-documented 
+on [ahead's help site][help]. Read on if you want to integrate with the API yourself.
+:::
+
+## Fields
+
+The basic payload of an activity would look something like this:
+
+```json
+{
+    "source": "Weather",
+    "title": "Weather in BCN",
+    "text": "Sunny with 23 degrees.",
+    "mediaurl": "http://cdn.io/bcn.jpg",
+    "url": "http://weather.com/locations/bcn",
+    "targetAudience": "All",
+    "identifier": "weather-bcn"
+}
+```
+
+
+| Field Name     | Mandatory| Example String                                           |
+|----------------|----------|----------------------------------------------------------|
+| title          | ✅       | The title of the activity                                |
+| source         |          | A source that controls the icon shown on ahead. See below for possible options|
+| text           |          | The text of the activity                                 |
+| mediaurl       |          | An image that is shown below title and text              |
+| url            |          | A url that is navigated to when clicked on the activity  |
+| targetAudience |          | This is relevant when using targeted activities. See our [help article][help2] for more on that|
+| identifier     |          | identifier to be used to ensure that only the newest activity with this identifier ever exists. Weather or Stock Ticker activities are nice examples where to use it|
+
+For the Source field you can use one of
+
+- Ahead
+- Birthday
+- DynamicsCrm
+- Event
+- Facebook
+- HubSpot
+- HR
+- Instagram
+- Menuplan
+- MicrosoftStream
+- Pipedrive
+- PressRelease
+- Slack
+- Sport
+- Stocks
+- Travel
+- Twitter
+- Weather
+- X
+- Yammer
+- Youtube
+- Other
+
+## Swagger
+
+You can also obtain a swagger file for tools that can generate an API call from the information provided there at
+
+```text
+https://connect.aheadintranet.com/api/ReceiveExternalActivity/swagger
+```
+Please note that you need to use an API Key also for this call.
+
+
+[help]: https://help.aheadintranet.com/de/integration#aktivitäten-feed
+[help2]: https://help.aheadintranet.com/de/set-up-activities-zapier
