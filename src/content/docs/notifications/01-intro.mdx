@@ -1,0 +1,56 @@
+---
+title: API description
+description: Here we describe ahead's external notification API
+prev: false
+next: false
+---
+import { LinkCard } from '@astrojs/starlight/components';
+
+This page describes everything you need to know to create external notifications in ahead.
+
+:::note
+**The external notifications API URL is**
+```text
+https://connect.aheadintranet.com/api/PeopleNotify
+```
+:::
+
+<LinkCard
+  title="Authorization - how to get & use API Keys"
+  description="Learn how to authorize your requests by using API Keys"
+  href="../../../api-keys/"
+/>
+
+## External notifications
+
+The external notification API allows you to send a notification to a certain user. The notification 
+will appear under ahead's notifications list in the upper right of the ahead web app, as well as a push notification
+should the user have ahead's mobile app installed.
+
+## Fields
+
+The basic payload of a call would looks something like this:
+
+```json {"1. you need to specify one of the two:": 2-4} {"2. You can specify up to 50 messages": 9-10 }
+[{
+
+    "userPrincipalName": "joe@company.com",
+    "employeeId": "12345"
+    "title": "The item(s) you ordered have arrived",
+    "body": "Your recent order at our office supplies shop is ready to be picked up",
+    "link": "https://internal.officesupplies/orders/1234"
+}, 
+
+...
+]
+```
+
+The payload is an array of objects. The following table describes one of those objects
+of which you can send up to 50.
+
+| Field Name          | Required  | Description                                                                |
+|---------------------|-----------|----------------------------------------------------------------------------|
+| userPrincipalName / employeeId| | Either `userPrincipalName` or `employeeId` must be provided, but not both. |
+| title               | yes       | The title of the notification.                                             |
+| body                |           | The main content of the notification.                                      |
+| link                |           | A URL linking to some place external to ahead                              |

@@ -31,24 +31,28 @@ export default defineConfig({
           items: [
             {
               label: "Reference",
-			  collapsed: true,
+              collapsed: true,
               autogenerate: { directory: "people-import/reference" },
             },
             {
               label: "Guides",
-			  collapsed: true,
+              collapsed: true,
               autogenerate: { directory: "people-import/guides" },
             },
           ],
         },
-		{
-			label: "Kiosk",
-			autogenerate: { directory: "kiosk/" },
-		},
-		{
-			label: "Activities",
-			autogenerate: { directory: "activities/" },
-		}
+        {
+          label: "Kiosk",
+          autogenerate: { directory: "kiosk/" },
+        },
+        {
+          label: "Activities",
+          autogenerate: { directory: "activities/" },
+        },
+        {
+          label: "External Notifications",
+          autogenerate: { directory: "notifications/" },
+        },
       ],
     }),
   ],
