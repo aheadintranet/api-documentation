@@ -5,8 +5,10 @@ description: How to reach the endpoint and basic settings around the HTTP Header
 import { CardGrid, LinkCard } from '@astrojs/starlight/components';
 
 :::note
-<h4>The ahead profiles API URL is</h4>
-<h5>htt<span>ps://connect</span>.aheadintranet.com/api/PeopleImport</h5>
+**The ahead profiles API URL is**
+```text
+https://connect.aheadintranet.com/api/PeopleImport
+```
 :::
 
 ## Request
@@ -85,9 +87,9 @@ can be identified in the import logs.
 
 If there’s any issue with the request at a basic level (e.g. wrong content type), a status code of `400` (Bad request) will be returned. Another possible reason is when all parts of the request failed to be processed.
 
-### Status Code 403 
+### Status Code 401
 
-A request without API-Key or an unknown API-Key will cause a return of `403`. Such calls will not appear in the protocol.
+A request without API-Key or an unknown API-Key will cause a return of `401`. Such calls will not appear in the protocol.
 
 ### Status Code 413
 
