@@ -1,0 +1,17 @@
+---
+interface Props {
+  columnMinimumWidth?: string;
+}
+const { columnMinimumWidth = "200px" } = Astro.props;
+---
+<style>
+  div :global(ul) {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(var(--colWidth), 1fr));
+    gap: 10px;
+  }
+</style>
+
+<div style={`--colWidth: ${columnMinimumWidth}`}>
+  <slot />
+</div>

@@ -5,6 +5,9 @@ prev: false
 next: false
 ---
 
+import { LinkCard } from '@astrojs/starlight/components';
+import MultiColumnList from '../../../components/MultiColumnList.astro';
+
 This page describes everything you need to know to create external activities in ahead.
 
 :::note
@@ -13,6 +16,13 @@ This page describes everything you need to know to create external activities in
 https://connect.aheadintranet.com/api/ReceiveExternalActivity
 ```
 :::
+
+<LinkCard
+  title="Authorization - how to get & use API Keys"
+  description="Learn how to authorize your requests by using API Keys"
+  href="../../api-keys/"
+/>
+
 
 ## External activities
 
@@ -53,6 +63,7 @@ The basic payload of an activity would look something like this:
 
 For the Source field you can use one of
 
+<MultiColumnList>
 - Ahead
 - Birthday
 - DynamicsCrm
@@ -75,6 +86,7 @@ For the Source field you can use one of
 - Yammer
 - Youtube
 - Other
+</MultiColumnList>
 
 ## Swagger
 
