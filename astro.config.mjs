@@ -42,6 +42,10 @@ export default defineConfig({
           ],
         },
         {
+          label: "Ask ahead import",
+          autogenerate: { directory: "askahead-import/" },
+        },
+        {
           label: "Kiosk",
           autogenerate: { directory: "kiosk/" },
         },
