@@ -4,6 +4,7 @@ import starlight from "@astrojs/starlight";
 // https://astro.build/config
 export default defineConfig({
   site: "https://aheadintranet.github.io",
+  base: "/api-documentation",
   integrations: [
     starlight({
       title: "API Documentation",
