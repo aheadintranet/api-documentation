@@ -43,6 +43,7 @@ The basic payload of an activity would look something like this:
     "source": "Weather",
     "title": "Weather in BCN",
     "text": "Sunny with 23 degrees.",
+    "origin": "weather.com"
     "mediaurl": "http://cdn.io/bcn.jpg",
     "url": "http://weather.com/locations/bcn",
     "targetAudience": "All",
@@ -56,6 +57,7 @@ The basic payload of an activity would look something like this:
 | title          | yes      | The title of the activity                                |
 | source         |          | A source that controls the icon shown on ahead. See below for possible options|
 | text           |          | The text of the activity                                 |
+| origin         |          | Additional information that whe present, is displayed underneath the main text as if "origin" authored the activity (_By \{origin\}_)
 | mediaurl       |          | An image that is shown below title and text              |
 | url            |          | A url that is navigated to when clicked on the activity  |
 | targetAudience |          | This is relevant when using targeted activities. See our [help article][help2] for more on that|
