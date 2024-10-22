@@ -4,7 +4,9 @@ import starlight from "@astrojs/starlight";
 // https://astro.build/config
 export default defineConfig({
   site: "https://aheadintranet.github.io",
-  base: "/api-documentation",
+  // somehow we ended up in the situation that this line is necessary for production
+  // but bad for development
+  base: import.meta.env.PROD ? "/api-documentation" : undefined,
   integrations: [
     starlight({
       title: "API Documentation",
