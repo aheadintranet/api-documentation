@@ -24,11 +24,12 @@ https://connect.aheadintranet.com/api/kioskfeed
 
 Additional parameters to send (beyond Authorization):
 
-| Parameter    | Description                                                                                     | Required |
-|--------------|-------------------------------------------------------------------------------------------------|----------|
-| languageCode | The preferred language of the news (2-letter ISO).                                              | Yes      |
-| size         | The number of news to retrieve. The maximum is **12**.                                          | No, default is **1** |
-| maxLeadText  | How many characters the lead text of each news should have. Choose a number from **300 - 800**  | No, default is **300** | 
+| Parameter       | Description                                                                                     | Required |
+|-----------------|-------------------------------------------------------------------------------------------------|----------|
+| languageCode    | The preferred language of the news (2-letter ISO).                                              | Yes      |
+| fullHtmlContent | If provided, sends all text of a news in its HTML-format                                        | No       |
+| size            | The number of news to retrieve. The maximum is **12**.                                          | No, default is **1** |
+| maxLeadText     | How many characters the lead text of each news should have. Choose a number from **300 - 800**  | No, default is **300** | 
 
 For general use how to use the API from an editor's perspective, please [visit the relevant article](https://help.aheadintranet.com/set-up-kiosks)
 on ahead's help site.
@@ -36,7 +37,7 @@ on ahead's help site.
 ## Response
 
 :::note
-A response is cached for **15 minutes** per API-key and size.
+A response is cached for **15 minutes**.
 :::
 
 A typical response looks as follows:
@@ -57,7 +58,8 @@ A typical response looks as follows:
       "companyName": "MountainGear"
     },
     "channels": ["HR-Infos"],
-    "url": "https://app.aheadintranet.com/news/4a308770-5210-4455-8f52-13616b7c2c91"
+    "url": "https://app.aheadintranet.com/news/4a308770-5210-4455-8f52-13616b7c2c91",
+    "htmlContent": "<h3><span>Greetings y'all</span></h3><p><span>Welcome to our </span><b><strong>seasonal greetings</strong></b><span>.</span></p>"
   }
 ]
 ```
@@ -65,7 +67,8 @@ A typical response looks as follows:
 | Property                      | Description                                                                                                                    | Can be null |
 |-------------------------------|--------------------------------------------------------------------------------------------------------------------------------|-------------|
 | title                         | The title of the news. Max 100 characters.                                                                                      | No          |
-| leadText                      | The first n characters of the content of the news, depending on the provided **maxLeadText**.                                                                            | Yes         |
+| leadText                      | The first n characters of the content of the news, depending on the provided **maxLeadText**. This is provided in plain text.   | Yes         |
+| htmlContent                   | If `fullHtmlContent` query value was provided, it contains all text of a news in its HTML-format.                              | Yes |
 | leadImageUrl                  | The URL of the first image of the news. This is either an external URL or a URL to an image stored in ahead storage. In the latter case, the URL is valid for only 30 minutes. | Yes         |
 | published                     | The date of when the news was published for the first time.                                                                     | No          |
 | channels                      | The name of the channels the news is published in.                                                                              | No, but can be empty |
@@ -77,3 +80,8 @@ A typical response looks as follows:
 | .officeLocation  | The author's value of the Entra ID property 'officeLocation'.                                                                   | Yes         |
 | .city            | The author's value of the Entra ID property 'city'.                                                                             | Yes         |
 | .companyName     | The author's value of the Entra ID property 'companyName'.                                                                      | Yes         |
+
+:::note
+If present, the `htmlContent` does not contain a full HTML document, but rather HTML fragments that can be placed e.g. into the body-tag
+of a document.
+:::
