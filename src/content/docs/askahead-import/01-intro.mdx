@@ -7,7 +7,7 @@ next: false
 import { LinkCard } from '@astrojs/starlight/components';
 
 This page provides the detailed specification for the Document Import API, 
-which allows to import documents to be used as sources for the ask ahead feature of ahead, 
+which allows to import documents to be used as sources for the **ask ahead** feature of ahead, 
 in which a user can ask questions and the system will generate responses based on the provided sources. 
 The Document Import API is designed to handle bulk document uploads with metadata options, 
 ensuring that content can be targeted to specific user groups or languages within your organization. 
@@ -29,44 +29,47 @@ https://connect.aheadintranet.com/api/AskAheadImport
 
 Metadata relevant to a document is
 
-* **Targeting**<br/>
+* **Targeting**:
   Much like targeted content in ahead, documents associated with targeting will not be considered 
   if the user asking the question does not match the targeting properties.
-* **Document Language**<br/>
-  If a document gets associated with a specific language, then the content language of the asking user 
-  must match the language associated with a document.
+* **Document Languages**: 
+  If a document gets associated with specific languages, then the content language of the asking user 
+  must match any of the languages associated with a document.
   The way information is stored in a Vector database means that the extracted content is generally language independent. As an example, ask ahead also allows answering questions in English even though the query’s source was provided in German.
-* **Tags**<br/>
+* **Tags**:
   A list of terms may be associated with a document which can aid the ranking of results based on a 
   user’s question.
-* **Source url**<br/>
+* **Source url**:
   In ask ahead, an answer lists the sources it derives the answer from. The default behavior is that the underlying file is opened. If a source link is provided, ahead will use that URL to open when listing the source.
 
 The metadata can be provided in the following ways:
 
-1.	As HTTP headers in the request – this has certain implications:
+1.	As **HTTP headers** in the request – this has certain implications:
     1.	The metadata applies to all documents sent in that request
     1.	In the case of the source URL, this forces the request to only contain a single document
-2.	As final part of content-type application/json in a multipart request. <br/>
-    Note that only metadata for files that are being uploaded in the same request will be used, 
-    other metadata items will be ignored.
-3.	As only payload in a request with content-type application/json
+2.	As **final part** of content-type application/json in a **multipart request**. The metadata will apply to all documents in the request.
+3.	As the only payload in a request with content-type application/json. This would be akin to an update of documents metadata, 
+    without changing the actual documents.
 
 
 
 ## Request
 
-The following content-types are understood by the endpoint, **multipart/form-data** to transmit files and metadata
-as well as **application/json** to receive metadata updates.
+The following **content-types** are understood by the endpoint: 
+* **multipart/form-data** to transmit files and metadata
+* **application/json** to receive metadata updates.
 
-In any case, the following HTTP headers are supported and evaluated:
+### Headers
 
-| Header   | Required | Description  |
-|----------|----------|--------------|
-| x-targeting-groups     | N      | A comma separated list of GUIDs pointing to ahead's predefined group. |
-| x-targeting-\{name\}   | N      | `name` may be any of the properties in use for targeting. If multiple values are given, they need to be separated by commas. |
-| x-document-languages   | N      | Comma-separated ISO-2 language codes that associate the document(s) with the language - they will only be queried for ahead users whose content language corresponds to one of the provided languages. The language(s) must be a subset of the tenant languages. |
-| x-source-url           | N      | When the document is listed as source, this URL will be used as the target of the source link.
+The following HTTP headers are supported and evaluated:
+
+| Header                 | Required | Description  |
+|------------------------|----------|--------------|
+| x-targeting-groups     | No       | A comma separated list of GUIDs pointing to ahead's predefined groups. |
+| x-targeting-\{name\}   | No       | `name` may be any of the properties in use for targeting. If multiple values are given, they need to be separated by commas. |
+| x-document-languages   | No       | Comma-separated ISO-2 language codes that associate the document(s) with the language - they will only be queried for ahead users whose content language corresponds to one of the provided languages. The language(s) must be a subset of the tenant languages. |
+| x-document-tags        | No       | A list of terms may be associated with a document which can aid the ranking of results based on a user’s question.
+| x-source-url           | No       | When the document is listed as source, this URL will be used as the target of the source link.
 
 :::caution
 The metadata provided through these headers apply to all documents sent in that request. 
@@ -74,38 +77,44 @@ The header **x-source-url** forces the request to only contain a single document
 otherwise the request will be considered wrong (400 bad request).
 :::
 
-### multipart/form-data
+### Document Upload request
 
-The following content types are supported for each part of a multipart request:
+In a document upload, the **content-type** of the request must be **multipart/form-data**
+
+The following content types are supported for **each part** of a multipart request:
 
 | Content type                                                                 | Description                                     |
 |------------------------------------------------------------------------------|-------------------------------------------------|
-| application/json                                                             | A JSON file that follows the specification in “application/json” |
 | application/text                                                             | A text document                                 |
 | application/pdf                                                              | A pdf document                                  |
 | text/html                                                                    | An html document                                |
 | application/vnd.openxmlformats-officedocument.wordprocessingml.document      | A docx document                                 |
 | application/vnd.openxmlformats-officedocument.spreadsheetml.sheet            | A xslx document                                 |
+| application/json                                                             | A JSON file that follows the specification in “application/json”. This is only for sending metadata related to uploaded documents. |
+
 
 A request may contain up to **50 documents**. The full size of the request may not exceed **104 MB**.
 
 The **filename** of each part can be freely chosen. ahead will use the content type to determine the content of the file.
 Note that the file name will be shown when the underlying sources are listed to a user asking a question.  
 
-If later requests use the same file name (i.e. a document known by ahead), it triggers an update of that document.
+:::note
+If later requests use **the same file name** (i.e. a document known by ahead), it triggers an **update** of that document.
+:::
 
 
-### application/json
+### Metadata update without document upload
 
+The request's content-type to choose is **application/json**
 The JSON must be an array where each item is a JSON object. It supports the following properties:
 
-| Property          | Mandatory | Type      | Description                                                                                                              |
-|-------------------|-----------|-----------|--------------------------------------------------------------------------------------------------------------------------|
-| fileName          | Y         | string    | Defines on which document the following metadata will be applied                                                         |
-| targeting         | N         | object    | Any targeting information to be associated with this document (See further down for the contents of this object)         |
-| documentLanguage  | N         | string[]  | An array of ISO-2 language codes which will mean that the content language of the asking user must match the language(s) specified for this document |
-| sourceURL         | N         | string    | This URL will be used when the source is being cited in an “ask ahead” answer                                             |
-| tags              | N         | string[]  | Any terms that you want associated with that document and aid in ranking sources for answering a question.                |
+| Property          | Required | Type      | Description                                                                                                              |
+|-------------------|----------|-----------|--------------------------------------------------------------------------------------------------------------------------|
+| fileName          | Y        | string    | Defines on which document the following metadata will be applied                                                         |
+| targeting         | N        | object    | Any targeting information to be associated with this document (See further down for the contents of this object)         |
+| documentLanguages | N        | string[]  | An array of ISO-2 language codes which will mean that the content language of the asking user must match the language(s) specified for this document |
+| sourceURL         | N        | string    | This URL will be used when the source is being cited in an “ask ahead” answer                                             |
+| tags              | N        | string[]  | Any terms that you want associated with that document and aid in ranking sources for answering a question.                |
 
 The “targeting” JSON object is constructed as follows:
 
@@ -123,7 +132,7 @@ Here is an example JSON for a metadata update of documents **"process-1.txt"** a
     "targeting": {
       "city": ["Atlanta", "Miami"],
     },
-    "documentLanguage": ["en"],
+    "documentLanguages": ["en"],
     "sourceURL": "https://processes.company.com/1/en",
     "tags": ["HR", "Travel"]
   },
