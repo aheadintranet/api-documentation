@@ -65,11 +65,11 @@ The following HTTP headers are supported and evaluated:
 
 | Header                 | Required | Description  |
 |------------------------|----------|--------------|
-| x-targeting-groups     | No       | A comma separated list of GUIDs pointing to ahead's predefined groups. |
-| x-targeting-\{name\}   | No       | `name` may be any of the properties in use for targeting. If multiple values are given, they need to be separated by commas. |
-| x-document-languages   | No       | Comma-separated ISO-2 language codes that associate the document(s) with the language - they will only be queried for ahead users whose content language corresponds to one of the provided languages. The language(s) must be a subset of the tenant languages. |
-| x-document-tags        | No       | A list of terms may be associated with a document which can aid the ranking of results based on a user’s question.
-| x-source-url           | No       | When the document is listed as source, this URL will be used as the target of the source link.
+| x-targeting-groups     | -        | A comma separated list of GUIDs pointing to ahead's predefined groups. |
+| x-targeting-\{name\}   | -        | `name` may be any of the properties in use for targeting. If multiple values are given, they need to be separated by commas. |
+| x-document-languages   | -        | Comma-separated ISO-2 language codes that associate the document(s) with the language - they will only be queried for ahead users whose content language corresponds to one of the provided languages. The language(s) must be a subset of the tenant languages. |
+| x-document-tags        | -        | Comma-separated terms associated with the document(s) which can aid the ranking of results based on a user’s question.
+| x-source-url           | -        | When the document is listed as source, this URL will be used as the target of the source link.
 
 :::caution
 The metadata provided through these headers apply to all documents sent in that request. 
@@ -110,11 +110,11 @@ The JSON must be an array where each item is a JSON object. It supports the foll
 
 | Property          | Required | Type      | Description                                                                                                              |
 |-------------------|----------|-----------|--------------------------------------------------------------------------------------------------------------------------|
-| fileName          | Y        | string    | Defines on which document the following metadata will be applied                                                         |
-| targeting         | N        | object    | Any targeting information to be associated with this document (See further down for the contents of this object)         |
-| documentLanguages | N        | string[]  | An array of ISO-2 language codes which will mean that the content language of the asking user must match the language(s) specified for this document |
-| sourceURL         | N        | string    | This URL will be used when the source is being cited in an “ask ahead” answer                                             |
-| tags              | N        | string[]  | Any terms that you want associated with that document and aid in ranking sources for answering a question.                |
+| fileName          | Yes      | string    | Defines on which document the following metadata will be applied                                                         |
+| targeting         | -        | object    | Any targeting information to be associated with this document (See further down for the contents of this object)         |
+| documentLanguages | -        | string[]  | An array of ISO-2 language codes which will mean that the content language of the asking user must match the language(s) specified for this document |
+| sourceURL         | -        | string    | This URL will be used when the source is being cited in an “ask ahead” answer                                             |
+| tags              | -        | string[]  | Any terms that you want associated with that document and aid in ranking sources for answering a question.                |
 
 The “targeting” JSON object is constructed as follows:
 
