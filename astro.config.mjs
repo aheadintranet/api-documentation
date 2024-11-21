@@ -28,7 +28,31 @@ export default defineConfig({
               label: "Authorize requests with ahead's API-keys",
               link: "api-keys",
             },
+            {
+              label: "Apply Targeting to API-based imports",
+              link: "targeting",
+            },
           ],
+        },
+        {
+          label: "Activities",
+          autogenerate: { directory: "activities/" },
+        },
+        {
+          label: "Ask ahead import",
+          autogenerate: { directory: "askahead-import/" },
+        },
+        {
+          label: "External Notifications",
+          autogenerate: { directory: "notifications/" },
+        },
+        {
+          label: "Events Import",
+          autogenerate: { directory: "events-import/" },
+        },
+        {
+          label: "Kiosk",
+          autogenerate: { directory: "kiosk/" },
         },
         {
           label: "Profile Import",
@@ -44,23 +68,7 @@ export default defineConfig({
               autogenerate: { directory: "people-import/guides" },
             },
           ],
-        },
-        {
-          label: "Ask ahead import",
-          autogenerate: { directory: "askahead-import/" },
-        },
-        {
-          label: "Kiosk",
-          autogenerate: { directory: "kiosk/" },
-        },
-        {
-          label: "Activities",
-          autogenerate: { directory: "activities/" },
-        },
-        {
-          label: "External Notifications",
-          autogenerate: { directory: "notifications/" },
-        },
+        }
       ],
     }),
   ],

@@ -1,0 +1,126 @@
+---
+title: Event import API description
+description: Here we describe ahead's event import API
+prev: false
+next: false
+---
+
+import { LinkCard } from "@astrojs/starlight/components";
+import { Image } from "astro:assets";
+import image1 from "../assets/event-card-hp.png";
+import image2 from "../assets/event-page.png";
+
+Bla
+
+:::note
+**The event import API URL is**
+
+```text
+https://connect.aheadintranet.com/api/MeetupImport
+```
+
+:::
+
+<LinkCard
+  title="Authorization - how to get & use API Keys"
+  description="Learn how to authorize your requests by using API Keys"
+  href="../../api-keys/"
+/>
+
+## Introduction
+
+This API allows you to publish Events that will become visible on the ahead homepage. Events published in this way support
+
+- Multilinguality (provided your tenant is set up that way)
+- Association with one channel
+- Targeting to show relevant content to your users
+
+Given the example payload shown below under "Example", the card on the homepage and on the "All events page" would like this:
+
+<Image src={image1} alt="Event Card" />
+
+While the following information would be presented to the user both in English and Spanish:
+
+<Image src={image2} alt="Event Page" />
+
+## Request
+
+The request's **content-type** must be **application/json**.
+
+The JSON must be an object with the following properties:
+
+| Property          | Required | Type              | Description                                                                                                                                          |
+| ----------------- | -------- | ----------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
+| title             | Yes      | ML-string         | The title of the event.                                                                                     |
+| location          | Yes      | ML-string         | The location at which the event takes place.                                     |
+| description       | -        | ML-string         | A description that becomes part of the event page information. |
+| startDate         | Yes      | ISO-8601 datetime | The start date and time of the event                                                                        |
+| endDate           | -        | ISO-8601 datetime | Optional end date and time of the event.                                           |
+| author            | Yes      | object            | An object identifying the author that should be used for this particular event.                                                                      |
+| channelId         | -        | string            | channel with which this event is associated. You get the id from the copy button in ahead's channel administration.                                  |
+| targeting         | -        | object            | Any targeting information to be associated with this document (See further down for the contents of this object).                                    |
+
+### Targeting
+
+The **“targeting”** JSON object is constructed as described on this page:
+
+<LinkCard
+  title="Using ahead's targeting via API"
+  description="Learn how to provide targeting information to your API payloads"
+  href="../../targeting/"
+/>
+
+### ML String
+
+The multilanguage string is a json object where the property is a lowercase two-letter ISO language code, and the value is a string.
+
+```json
+{ 
+  "en": "SAP Upgrade", 
+  "de": "SAP Upgrade", 
+  "es": "Actualización de SAP" 
+}
+```
+### Author object
+
+The author object must contain one of
+* the **“employeeId”** field. This field needs to correlate with a person’s “employeeId” value as stored in MS Entra.
+* the **“userPrincipalName”** (UPN). This field needs to correlate with a person’s user principal name in MS Entra.
+
+### Validations
+
+When choosing in which languages to publish the event, please note the following:
+
+* The languages used must be available in the list of **content languages** that your tenant uses in ahead.
+* The use of languages must be consistent throughout **title**, **location** and **description**.
+
+For the choice of **author**, it will be checked that
+
+* we can identify a person that can use ahead
+* that particular person has **editor permissions**.
+
+For the choice of **targeting**, it will be checked that
+
+* The targeting reaches someone (i.e. somebody is targeted by that particular combination)
+
+### Example
+
+The following would be an example payload:
+
+```json
+{
+  "title": { "en": "SAP Upgrade", "es": "Actualización de SAP" },
+  "location": { "en": "Spain", "es": "España" },
+  "description": {
+    "en": "SAP systems in Spain will be upgraded. Interruptions will be possible during that time",
+    "es": "Se actualizarán los sistemas SAP en España. Interrupciones serán posibles durante ese tiempo"
+  },
+  "startDate": "2025-01-10T10:00:00.000Z",
+  "endDate": "2025-01-10T15:00:00.000Z",
+  "author": { "userPrincipalName": "{upn-of-choice}" },
+  "channelId": "{your-channel-id}",
+  "targeting": {
+    "groups": ["{your-group-id}"]
+  }
+}
+```
