@@ -1,0 +1,64 @@
+---
+title: Targeting payloads
+description: At ahead, much content can be targeted to specific audiences. Here we describe how for APIs supporting this
+prev: false
+next: false
+---
+
+import { Image } from 'astro:assets';
+import image1 from './assets/ahead-targeting.png'
+import image2 from './assets/advanced-targeting.png'
+
+## Targeting in ahead
+
+The majority of content on ahead can be targeted to specific users. Targeting is based on defining
+a template that can contain
+* user groups
+* possible property values
+
+<Image src={image1} alt="Targeting concept in ahead" />
+
+A user gets to see ahead content when they have **at least one** match in **all** defined kinds of targeting values.
+
+The properties that can be used are the ones listed in the **"Advanced target audiences"** section in the **"Company settings"**.
+
+<Image src={image2} alt="Advanced targeting in the ahead administration" />
+
+:::caution
+If your tenant does not have **"Advanced Targeting"** enabled, you can only used targeting based on the groups property.
+:::
+
+## API
+
+When an API supports targeting, the sent JSON should define a **targeting** property that follows the following structure:
+
+| Property     | Type      | Description                                                                                       |
+|--------------|-----------|---------------------------------------------------------------------------------------------------|
+| \{property\} | string[]  | Any user property that is being targeted. If the user has any of the values listed here, the document will be used as a source to create an answer |
+| groups       | string[]  | Known as predefined groups in ahead, if the asking user is a member of the group, the document will be used as a source to create an answer. |
+
+
+Usually the **targeting**-property is optional. If it is missing, we assume that the content is meant to be seen by all of the company.
+
+### Example
+
+When an API supports targeting, this would be a valid example of targeting:
+
+```json
+{
+  ...
+  "targeting": {
+    "city": ["Atlanta", "Miami"],
+    "groups": ["476c46e5-0165-4afb-b0c7-563b56db93d5"]
+  }
+}
+```
+
+Content associated with this target will be visible to users, who
+* belong to the group identified by the provided id **AND**
+* whose "city" property is either _"Atlanta"_ **OR** _"Miami"_
+
+:::note
+**Targeting != Privateness**. Generally, targeting is used to provide users with relevant content.
+Users can still see all content if they wish to do so.
+:::

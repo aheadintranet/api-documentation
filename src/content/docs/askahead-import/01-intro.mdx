@@ -116,33 +116,10 @@ The JSON must be an array where each item is a JSON object. It supports the foll
 | sourceURL         | -        | string    | This URL will be used when the source is being cited in an “ask ahead” answer                                             |
 | tags              | -        | string[]  | Any terms that you want associated with that document and aid in ranking sources for answering a question.                |
 
-The “targeting” JSON object is constructed as follows:
+The “targeting” JSON object is constructed as described on this page:
 
-| Property     | Type      | Description                                                                                       |
-|--------------|-----------|---------------------------------------------------------------------------------------------------|
-| \{property\} | string[]  | Any user property that is being targeted. If the user has any of the values listed here, the document will be used as a source to create an answer |
-| groups       | string[]  | Known as predefined groups in ahead, if the asking user is a member of the group, the document will be used as a source to create an answer. |
-
-Here is an example JSON for a metadata update of documents **"process-1.txt"** and **"process-2.txt"**.
-
-```json
-[
-  {
-    "fileName": "process-1.txt",
-    "targeting": {
-      "city": ["Atlanta", "Miami"],
-    },
-    "documentLanguages": ["en"],
-    "sourceURL": "https://processes.company.com/1/en",
-    "tags": ["HR", "Travel"]
-  },
-  {
-    "fileName": "process-2.txt",
-    "targeting": {
-      "groups": ["476c46e5-0165-4afb-b0c7-563b56db93d5"]
-    },
-    "sourceURL": "https://legacy.com/expenses",
-    "tags": ["HR"]
-  }
-]
-```
+<LinkCard
+  title="Using ahead's targeting via API"
+  description="Learn how to provide targeting information to your API payloads"
+  href="../../targeting/"
+/>
