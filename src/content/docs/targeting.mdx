@@ -34,8 +34,8 @@ When an API supports targeting, the sent JSON should define a **targeting** prop
 
 | Property     | Type      | Description                                                                                       |
 |--------------|-----------|---------------------------------------------------------------------------------------------------|
-| \{property\} | string[]  | Any user property that is being targeted. If the user has any of the values listed here, the document will be used as a source to create an answer |
-| groups       | string[]  | Known as predefined groups in ahead, if the asking user is a member of the group, the document will be used as a source to create an answer. |
+| \{property\} | string[]  | Any user property that is being targeted. If the user has any of the values listed here, the content will be provided to that user. |
+| groups       | string[]  | Known as predefined groups in ahead, if the asking user is a member of the group, the content will be provided to that user. |
 
 
 Usually the **targeting**-property is optional. If it is missing, we assume that the content is meant to be seen by all of the company.
