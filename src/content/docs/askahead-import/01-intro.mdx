@@ -6,6 +6,8 @@ next: false
 ---
 import { LinkCard } from '@astrojs/starlight/components';
 
+# Overview
+
 This page provides the detailed specification for the Document Import API, 
 which allows to import documents to be used as sources for the **ask ahead** feature of ahead, 
 in which a user can ask questions and the system will generate responses based on the provided sources. 
@@ -25,7 +27,7 @@ https://connect.aheadintranet.com/api/AskAheadImport
   href="../../api-keys/"
 />
 
-## Document metadata
+## About document metadata
 
 Metadata relevant to a document is
 
@@ -47,17 +49,13 @@ The metadata can be provided in the following ways:
 1.	As **HTTP headers** in the request – this has certain implications:
     1.	The metadata applies to all documents sent in that request
     1.	In the case of the source URL, this forces the request to only contain a single document
-2.	As **final part** of content-type application/json in a **multipart request**. The metadata will apply to all documents in the request.
-3.	As the only payload in a request with content-type application/json. This would be akin to an update of documents metadata, 
-    without changing the actual documents.
+2.	As **final part** of content-type application/json in a **multipart request**. This allows specifying metadata for each file being uploaded in the request.
 
+# Request
 
+## PUT
 
-## Request
-
-The following **content-types** are understood by the endpoint: 
-* **multipart/form-data** to transmit files and metadata
-* **application/json** to receive metadata updates.
+You can *add* or *update* ask ahead documents via the PUT verb. The **Content-Type** must be **multipart/form-data**.
 
 ### Headers
 
@@ -77,10 +75,6 @@ The header **x-source-url** forces the request to only contain a single document
 otherwise the request will be considered wrong (400 bad request).
 :::
 
-### Document Upload request
-
-In a document upload, the **content-type** of the request must be **multipart/form-data**
-
 The following content types are supported for **each part** of a multipart request:
 
 | Content type                                                                 | Description                                     |
@@ -90,8 +84,8 @@ The following content types are supported for **each part** of a multipart reque
 | text/html                                                                    | An html document                                |
 | application/vnd.openxmlformats-officedocument.wordprocessingml.document      | A docx document                                 |
 | application/vnd.openxmlformats-officedocument.spreadsheetml.sheet            | A xslx document                                 |
-| application/json                                                             | A JSON file that follows the specification in “application/json”. This is only for sending metadata related to uploaded documents. |
-
+| application/vnd.openxmlformats-officedocument.presentationml.presentation    | A powerpoint presentation                       |
+| application/json                                                             | A JSON file that follows the documentation in “Metadata update”. This is only for sending metadata related to uploaded documents. |
 
 A request may contain up to **50 documents**. The full size of the request may not exceed **104 MB**.
 
@@ -103,9 +97,8 @@ If later requests use **the same file name** (i.e. a document known by ahead), i
 :::
 
 
-### Metadata update without document upload
+### Metadata update
 
-The request's content-type to choose is **application/json**
 The JSON must be an array where each item is a JSON object. It supports the following properties:
 
 | Property          | Required | Type      | Description                                                                                                              |
@@ -123,3 +116,10 @@ The “targeting” JSON object is constructed as described on this page:
   description="Learn how to provide targeting information to your API payloads"
   href="../../targeting/"
 />
+
+## DELETE
+
+You can delete a single file by using the DELETE verb on the endpoint. In this case,
+you MUST provide a single **filename** query parameter that specifies a filename that you wish to delete.
+
+The operation will also succeed if no file was found with that name.
