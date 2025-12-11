@@ -47,7 +47,8 @@ The basic payload of an activity would look something like this:
     "mediaurl": "http://cdn.io/bcn.jpg",
     "url": "http://weather.com/locations/bcn",
     "targetAudience": "All",
-    "identifier": "weather-bcn"
+    "identifier": "weather-bcn",
+    "expires": "5d"
 }
 ```
 
@@ -62,6 +63,7 @@ The basic payload of an activity would look something like this:
 | url            |          | A url that is navigated to when clicked on the activity  |
 | targetAudience |          | This is relevant when using targeted activities. See our [help article][help2] for more on that|
 | identifier     |          | identifier to be used to ensure that only the newest activity with this identifier ever exists. Weather or Stock Ticker activities are nice examples where to use it|
+| expires        |          | The number of days in which the activity will expire. Format `(\d{1,2})d`. Allowed values: 0 to 30.|
 
 For the Source field you can use one of
 
