@@ -15,11 +15,11 @@ export default defineConfig({
         light: "/src/assets/ahead--light.png",
         dark: "/src/assets/ahead--dark.png",
       },
-      social: {
-        linkedin: "https://www.linkedin.com/company/aheadintranet/",
-        github: "https://github.com/aheadintranet/api-documentation",
-        email: "mailto:support@aheadintranet.com",
-      },
+      social: [
+        { icon: "linkedin", label: "LinkedIn", href: "https://www.linkedin.com/company/aheadintranet/" },
+        { icon: "github", label: "GitHub", href: "https://github.com/aheadintranet/api-documentation" },
+        { icon: "email", label: "Email", href: "mailto:support@aheadintranet.com" },
+      ],
       sidebar: [
         {
           label: "General",
@@ -36,23 +36,23 @@ export default defineConfig({
         },
         {
           label: "Activities",
-          autogenerate: { directory: "activities/" },
+          items: [{ autogenerate: { directory: "activities/" } }],
         },
         {
           label: "Ask ahead import",
-          autogenerate: { directory: "askahead-import/" },
+          items: [{ autogenerate: { directory: "askahead-import/" } }],
         },
         {
           label: "External Notifications",
-          autogenerate: { directory: "notifications/" },
+          items: [{ autogenerate: { directory: "notifications/" } }],
         },
         {
           label: "Events Import",
-          autogenerate: { directory: "events-import/" },
+          items: [{ autogenerate: { directory: "events-import/" } }],
         },
         {
           label: "Kiosk",
-          autogenerate: { directory: "kiosk/" },
+          items: [{ autogenerate: { directory: "kiosk/" } }],
         },
         {
           label: "Profile Import",
@@ -60,12 +60,12 @@ export default defineConfig({
             {
               label: "Reference",
               collapsed: true,
-              autogenerate: { directory: "people-import/reference" },
+              items: [{ autogenerate: { directory: "people-import/reference" } }],
             },
             {
               label: "Guides",
               collapsed: true,
-              autogenerate: { directory: "people-import/guides" },
+              items: [{ autogenerate: { directory: "people-import/guides" } }],
             },
           ],
         }
