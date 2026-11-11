@@ -1,0 +1,235 @@
+---
+title: API description
+description: Here we describe ahead's course participation API
+prev: false
+next: false
+---
+
+import { LinkCard } from '@astrojs/starlight/components';
+
+With the course participation API, an external system can read which courses people in your organization
+participate in, their current status in each course and when they enroled in and completed it.
+
+:::note
+**The course participation API URL is**
+```text
+https://connect.aheadintranet.com/api/learning/participation
+```
+:::
+
+<LinkCard
+  title="Authorization - how to get & use API Keys"
+  description="Learn how to authorize your requests by using API Keys"
+  href="../../api-keys/"
+/>
+
+When adding the API-Key, select the feature **Course participation**. This option is only available when
+ahead Learning is enabled for your organization. The API only works while Learning is enabled: if Learning is
+disabled later, existing keys remain listed and can be deleted, and they work again once Learning is re-enabled.
+
+## What the API returns
+
+The API returns each person's **current participation in published courses**:
+
+* Both regular courses and imported xAPI courses are included.
+* Courses in draft or archived state are not included, even if a person has already completed them. Archiving
+  or unpublishing a course removes it from the response.
+* Every enrolment in a published course counts, whatever its status and whether the course is mandatory
+  or not.
+* When a person is enroled in a course again, e.g. for a recertification, the response shows the new
+  enrolment's status and dates. The API does not provide a history of earlier completions.
+
+## Two ways to retrieve participation
+
+The API is called with an HTTP `GET` request and has no request body. Depending on the query parameters, it
+works in one of two modes:
+
+* **Single person:** provide either `upn` or `employeeId` to get the courses of one person.
+* **All participants:** provide neither to get, page by page, all people who participate in at least one
+  published course.
+
+### Parameters
+
+Additional parameters to send (beyond Authorization):
+
+| Parameter         | Description                                                                                                  | Required |
+|-------------------|--------------------------------------------------------------------------------------------------------------|----------|
+| upn               | The user principal name of a person. Matched case-insensitively.                                              | No       |
+| employeeId        | The employee ID of a person. Matched exactly, so leading zeroes matter.                                       | No       |
+| languageCode      | The preferred language of the course names (2-letter ISO, e.g. `de`). It must be one of your organization's languages. When omitted, or when a course has no name in that language, the usual language fallback of ahead applies. | No |
+| continuationToken | Only when retrieving all participants: the token returned by the previous page. Omit it for the first page.  | No       |
+
+The following combinations are rejected with `400 InvalidQuery`:
+
+* both `upn` and `employeeId`
+* `continuationToken` together with `upn` or `employeeId`
+* a parameter given more than once, or given with a blank value
+* any parameter not listed above (apart from the API-Key parameter `code`). This way, a misspelled `upn`
+  does not accidentally retrieve all participants.
+* a `languageCode` that is not one of your organization's languages
+* a `continuationToken` that was not returned by this API
+
+Remember to URL-encode the parameter values, e.g. `upn=anna.muster%40example.com`.
+
+## Retrieve the courses of one person
+
+```http
+GET https://connect.aheadintranet.com/api/learning/participation?employeeId=0012345&languageCode=en
+x-functions-key: <your API-Key>
+```
+
+The response is a list of the person's courses, ordered by course ID:
+
+```json
+[
+  {
+    "id": "9cf92626-05aa-4634-9228-b956fd890497",
+    "name": "Workplace security 101",
+    "status": "Completed",
+    "enroled": "2026-02-02T09:00:00Z",
+    "completed": "2026-07-03T14:20:00Z"
+  },
+  {
+    "id": "e1b0a3f2-7c4d-4f0e-9a51-2d6c8b3f7a10",
+    "name": "Fire safety",
+    "status": "InProgress",
+    "enroled": "2026-05-11T07:30:00Z"
+  }
+]
+```
+
+| Property  | Description                                                                                                      | Can be null |
+|-----------|------------------------------------------------------------------------------------------------------------------|-------------|
+| id        | The stable ID of the course in ahead. Use it to recognize a course, as its name can change.                       | No          |
+| name      | The name of the course, in the requested language or according to the language fallback.                         | No          |
+| status    | The person's status in the course: one of `NotStarted`, `InProgress` or `Completed`.                              | No          |
+| enroled   | When the person was enroled in the course, in UTC (ISO 8601).                                                     | No          |
+| completed | When the person completed the course, in UTC (ISO 8601).                                                          | Omitted when the person has not completed the course |
+
+:::note
+The property is spelled `enroled`, with a single `l`.
+:::
+
+If no person matches the identifier, the API responds with `404 PersonNotFound`. A person who exists but
+participates in no published course gets `200` with an empty list `[]`.
+
+## Retrieve all participants
+
+Without `upn` and `employeeId`, the API returns a page of the people who participate in at least one published
+course, each with **all** of their published courses:
+
+```http
+GET https://connect.aheadintranet.com/api/learning/participation?languageCode=en
+x-functions-key: <your API-Key>
+```
+
+```json
+{
+  "items": [
+    {
+      "personId": "6f3ce8bf-f957-4172-b627-c0824c565d54",
+      "upn": "anna.muster@example.com",
+      "employeeId": "0012345",
+      "courses": [
+        {
+          "id": "9cf92626-05aa-4634-9228-b956fd890497",
+          "name": "Workplace security 101",
+          "status": "Completed",
+          "enroled": "2026-02-02T09:00:00Z",
+          "completed": "2026-07-03T14:20:00Z"
+        }
+      ]
+    }
+  ],
+  "continuationToken": "30"
+}
+```
+
+| Property          | Description                                                                                 | Can be null |
+|-------------------|---------------------------------------------------------------------------------------------|-------------|
+| items             | The people on this page.                                                                    | No, but can be empty |
+| continuationToken | The token to request the next page with. `null` when there are no more pages.               | Yes         |
+|**items**|
+| .personId         | The stable ID of the person in ahead.                                                       | No          |
+| .upn              | The user principal name of the person.                                                      | No          |
+| .employeeId       | The employee ID of the person.                                                              | Yes         |
+| .courses          | The person's courses, ordered by course ID, with the same properties as for a single person. | No, never empty |
+
+People whose ahead profile is deactivated or no longer exists are left out.
+
+### Paging through all participants
+
+Request the next page by passing the returned `continuationToken` unchanged, together with the same
+`languageCode` as before. Treat the token as an opaque value. **Keep going until the token is `null`.**
+
+:::caution
+Do not stop when a page has few or no `items`. People that are left out (see above) still count towards a
+page, so a page can contain fewer people than others, or none at all, while more pages follow.
+:::
+
+```js
+const url = "https://connect.aheadintranet.com/api/learning/participation";
+const participants = [];
+let continuationToken = null;
+
+do {
+  const query = new URLSearchParams({ languageCode: "en" });
+  if (continuationToken !== null) {
+    query.set("continuationToken", continuationToken);
+  }
+
+  const response = await fetch(`${url}?${query}`, {
+    headers: { "x-functions-key": apiKey },
+  });
+  if (!response.ok) {
+    const requestId = response.headers.get("x-ahead-request-id");
+    throw new Error(`Request ${requestId} failed with status ${response.status}`);
+  }
+
+  const page = await response.json();
+  participants.push(...page.items);
+  continuationToken = page.continuationToken;
+} while (continuationToken !== null);
+```
+
+Each page is read when it is requested. If enrolments or courses change while you page through, later pages
+reflect those changes.
+
+## Errors
+
+All responses carry the header `Cache-Control: no-store`. Except for `401`, errors are returned with a JSON body:
+
+```json
+{
+  "code": "PersonNotFound",
+  "message": "No person matches the given identifier.",
+  "requestId": "98e51b88-932d-4a33-8e13-58fc39d7faf1"
+}
+```
+
+| Status | code               | message                                           | When                                                                 |
+|--------|--------------------|---------------------------------------------------|----------------------------------------------------------------------|
+| `400`  | `InvalidQuery`     | The query parameters are invalid.                 | The query parameters break one of the rules [above](#parameters).    |
+| `401`  | –                  | –                                                 | The API-Key is missing, unknown, deleted or was created for another feature. There is no JSON body. |
+| `403`  | `LearningDisabled` | Learning is not enabled for this organization.    | Learning is disabled for your organization. This is checked before the query parameters. |
+| `404`  | `PersonNotFound`   | No person matches the given identifier.           | No person matches the given `upn` or `employeeId`.                   |
+| `500`  | `InternalError`    | The request could not be completed.               | An unexpected error occurred. No partial data is returned; please retry later. |
+
+## Find a request in the logs
+
+Every response except `401` carries the header **`x-ahead-request-id`**. For errors, the same value is also
+provided as `requestId` in the body.
+
+Each request is logged in ahead: administrators find the logs under **Company Settings / Integrations**,
+labeled with the name of the API-Key used. Search the logs for the request ID to find the entry of a specific
+request and open its details. The details tell which mode was used, the outcome and how many people and courses
+were returned. They never contain the API-Key, the continuation token or the returned data.
+
+:::note
+Some requests cannot be found by their request ID:
+
+* Requests rejected with `401` are not logged, since ahead cannot tell which organization they belong to.
+* If ahead has set up your API-Key to skip successful requests, the details of successful requests are still
+  written to the log, but they cannot be found by searching for their request ID.
+* In the rare case that ahead fails to store the log, the request fails with `500` and might not be logged at all.
+:::

@@ -47,6 +47,10 @@ export default defineConfig({
           items: [{ autogenerate: { directory: "notifications/" } }],
         },
         {
+          label: "Course participation",
+          items: [{ autogenerate: { directory: "course-participation/" } }],
+        },
+        {
           label: "Events Import",
           items: [{ autogenerate: { directory: "events-import/" } }],
         },
